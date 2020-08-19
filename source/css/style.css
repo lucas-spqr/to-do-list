@@ -110,6 +110,8 @@ header{
 
     margin-left: 1.8em;
     margin-top: .8em;
+
+    transition: all .2s ease;
 }
 
 .containerHeader a:hover{
