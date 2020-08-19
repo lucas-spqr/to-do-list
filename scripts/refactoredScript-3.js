@@ -14,6 +14,5 @@ class TaskList{
 
 }
 
-const taskList = new TaskList()
-
-console.log(taskList.newTaskButton)
+// const taskList = new TaskList()
+// console.log(taskList.newTaskButton)
