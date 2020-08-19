@@ -68,9 +68,11 @@ function createDeleteButton(){
 }
 
 // marcar e desmarcar feature
+// edit task feature
 class Tasks{
     constructor(){
-        this.status = 0
+        this.conclusionTaskStatus = 0
+        this.editTaskStatus = 0
     }
 }
 
@@ -101,21 +103,21 @@ function createNewTask(){
     const task = new Tasks()
 
     function concludeTask(){
-        if(task.status == 0){
+        if(task.conclusionTaskStatus == 0){
             newLi.style.textDecoration = "line-through"
             newImg.src = "../images/melancia-aberta.svg"
 
             newConcludeButton.textContent = "não concluído"
 
-            task.status = 1
+            task.conclusionTaskStatus = 1
         }
-        else if(task.status == 1){
+        else if(task.conclusionTaskStatus == 1){
             newLi.style.textDecoration = "none"
             newImg.src = "../images/melancia-fechada.svg"
 
             newConcludeButton.textContent = "concluído"
 
-            task.status = 0
+            task.conclusionTaskStatus = 0
         }
     }
 
@@ -129,7 +131,49 @@ function createNewTask(){
 
     newDeleteButton.addEventListener("click", deleteTask)
 
+    function editTaskContent(){
+        task.editTaskStatus == 0
+
+        // criando input de edição
+        const editInput = document.createElement("input")
+
+        // para estilização no CSS
+        editInput.classList.add("edititingInput")
+
+        // adicionando o value do input de edição como o valor do texto da li clicada
+        editInput.value = newLi.textContent
+
+        // adicionando o input na ul
+        newUl.appendChild(editInput)
+
+        // sumindo com a li enquanto existe a edição
+        newLi.style.display = "none"
+
+        editInput.focus()
+
+        editInput.addEventListener("keyup", (event)=> {
+            if(event.keyCode === 13){
+                // capturando o value do input já editado
+                const editedInputValue = editInput.value
+
+                // mudando o texto da li para o valor do input editado
+                newLi.textContent = editedInputValue
+
+                // voltando com o display inicial da li
+                newLi.style.display = "initial"
+
+                // removendo o input de edição
+                editInput.remove()
+            }
+        })        
+  
+    }
+
+    newLi.addEventListener("click", editTaskContent)
     
+
+
+
     userInput.value = ""
     userInput.focus()
 
