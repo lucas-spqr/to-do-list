@@ -211,6 +211,27 @@ ul{
     align-items: center;
 }
 
+
+.editingInput{
+    width: fit-content;
+    padding: .8em .4em .8em 1em;
+    outline: none;
+
+    font-size: .7em;
+    font-family: Montserrat, sans-serif;
+
+    border: none;
+    border-radius: 5px;
+
+    transition: padding-right 0.5s;
+}
+
+.editingInput:focus{
+    padding-right: 2em;
+
+    border-bottom: 4px solid var(--vinho-claro);
+}
+
 @media (max-width: 700px){
     .containerTarefa{
         display: flex;

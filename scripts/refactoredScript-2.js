@@ -138,7 +138,7 @@ function createNewTask(){
         const editInput = document.createElement("input")
 
         // para estilização no CSS
-        editInput.classList.add("edititingInput")
+        editInput.classList.add("editingInput")
 
         // adicionando o value do input de edição como o valor do texto da li clicada
         editInput.value = newLi.textContent
