@@ -1,0 +1,142 @@
+:root{
+    --verde-escuro: #3D944B;
+    --verde-medio: #73E085;
+    --verde-claro: #9CFFAC;
+    --vinho-escuro: #942E43;
+    --vinho-claro: #E07289;
+}
+
+body{
+    width: 90%;
+    margin: 0 auto;
+
+    font-size: 3rem;
+    font-family: 'Montserrat', sans-serif;
+
+    text-align: center;
+
+    background-color: #73E085;
+}
+
+.main{
+    width: 90%;
+    margin: 5rem auto 0;
+}
+
+.titulo{
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 5rem;
+}
+
+h1{
+    margin-bottom: 2rem;
+
+    width: fit-content;
+
+    border-left: 4px solid whitesmoke;
+    padding-left: 1rem;
+    
+}
+
+.melanciaFechada, .melanciaAberta{
+    width: 300px;
+    height: 300px;
+}
+
+.melanciaAberta{
+    position: fixed;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+
+
+    margin-bottom: 10rem;
+
+    /* position: relative; */
+}
+
+/* .container img {
+    position: absolute;
+} */
+
+
+.melanciaFechada {
+    animation-name: fadeOut;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
+    animation-direction: alternate;
+  }
+  
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    25% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+
+.melanciaAberta {
+    animation-name: fadeIn;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 3s;
+    animation-direction: alternate;
+  }
+  
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0;
+    }
+    75% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.buttons{
+    display: flex;
+    width: 295px;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+a{
+    border: none;
+    text-decoration: none;
+
+    background-color: var(--vinho-claro);
+
+    font-family: "Montserrat", sans-serif;
+    font-size: .6em;
+    color: whitesmoke;
+
+    padding: .5rem 1rem;
+
+    transition: .3s;
+
+    margin-bottom: 9rem;
+}
+
+a:hover{
+    background-color: rgba(148, 46, 67, 0.8);
+}
+
