@@ -69,13 +69,21 @@ function createDeleteButton(){
 
 // marcar e desmarcar feature
 // edit task feature
+// identification feature
 class Tasks{
     constructor(){
         this.conclusionTaskStatus = 0
         this.editTaskStatus = 0
+        this.id = 0
+    }
+
+    incrementId(){
+        return this.id += 1
     }
 }
 
+// For features
+const task = new Tasks()
 
 function createNewTask(){
 
@@ -99,8 +107,11 @@ function createNewTask(){
     newDiv.appendChild(newConcludeButton)
     newDiv.appendChild(newDeleteButton)
 
-    // marcar e desmarcar feature
-    const task = new Tasks()
+    // Setting an "id" class for every task
+    newLi.classList.add(`${task.id}`)
+    // Incrementing "id"
+    task.incrementId()
+
 
     function concludeTask(){
         if(task.conclusionTaskStatus == 0){
