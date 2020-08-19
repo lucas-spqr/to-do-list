@@ -118,6 +118,13 @@ header{
 
     text-align: justify;
 
+    transition: border .1s ease;
+}
+
+.tarefa-li:hover{
+    border-bottom: 4px solid var(--verde-escuro);
+
+    cursor: pointer;
 }
 
 .containerTarefa button{
