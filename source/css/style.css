@@ -147,7 +147,7 @@ ul img{
     left: -8px;
 }
 
-.containerTarefa li{
+.containerTarefa p{
     font-weight: 500;
 
     width: fit-content;
@@ -282,3 +282,37 @@ ul{
 
 /* MOBILE RESPONSIVE */
 
+/* landscape phones */
+@media (max-width: 576px){
+    .containerHeader{
+        display: grid;
+        grid-template-areas: 
+        "return-arrow image title";
+    }
+
+    #returnPageArrow{
+        width: 20px;
+        height: 20px;
+    }
+
+    .headerDiv .headerImage{
+        width: 30px;
+        height: 30px;
+
+        position: relative;
+        top: 6px;
+        left: -3px;
+    }
+
+    .headerDiv h1{
+        font-size: .8em;
+    }
+}
+
+/* tablets */
+@media (max-width: 768px){
+}
+
+/* large desktops */
+@media (min-width: 1200px){
+}

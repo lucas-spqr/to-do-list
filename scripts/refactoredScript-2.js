@@ -29,7 +29,7 @@ function createUl(){
 function createImg(){
     var newImg = document.createElement("img")
     newImg.classList.add("imagemMelancia")
-    newImg.src = "../images/melancia-fechada.svg"
+    newImg.src = "./source/images/melancia-fechada.svg"
     return newImg
 }
 
@@ -37,8 +37,8 @@ function createImg(){
 // create li function
     // add classes
 
-function createLi(userInput){
-    var newLi = document.createElement("li")
+function createP(userInput){
+    var newLi = document.createElement("p")
     newLi.classList.add("tarefa-li")
     newLi.textContent = userInput
     return newLi
@@ -94,7 +94,7 @@ function createNewTask(){
     const newDiv = createDiv()
     const newUl = createUl()
     const newImg = createImg()
-    const newLi = createLi(userInputValue)
+    const newLi = createP(userInputValue)
 
     const newConcludeButton = createConcludeButton()
     const newDeleteButton = createDeleteButton()
@@ -116,7 +116,7 @@ function createNewTask(){
     function concludeTask(){
         if(task.conclusionTaskStatus == 0){
             newLi.style.textDecoration = "line-through"
-            newImg.src = "../images/melancia-aberta.svg"
+            newImg.src = "./source/images/melancia-aberta.svg"
 
             newConcludeButton.textContent = "não concluído"
 
@@ -124,7 +124,7 @@ function createNewTask(){
         }
         else if(task.conclusionTaskStatus == 1){
             newLi.style.textDecoration = "none"
-            newImg.src = "../images/melancia-fechada.svg"
+            newImg.src = "./source/images/melancia-fechada.svg"
 
             newConcludeButton.textContent = "concluído"
 
@@ -206,7 +206,7 @@ userInput.addEventListener("keyup", (event) => {
 // CREATES EXEMPLE TASK
 function createExempleTask(){
     createNewTask()
-    var task = document.querySelector("li")
+    var task = document.querySelector("p")
     task.textContent = "comprar melancia na feira"
 }
 
