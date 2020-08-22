@@ -1,31 +1,5 @@
-/* BOTTOM CONTENT :HOVER :AFTER FEATURE */
-.containerTarefa li:hover:after{
-    content: "";
-    width: 200px;
-    height: 4px;
-
-    background: var(--verde-escuro);
-
-    display: block;
-    position: relative;
-
-    animation: bottomContentGrow;
-    animation-duration: .5s;
-}
-
-@keyframes bottomContentGrow{
-    0%{
-        width: 0;
-    }
-
-    100%{
-        width: 200px;
-    }
-} 
-
-
 /* LEFT CONTENT :HOVER:AFTER FEATURE */
-.containerTarefa li:hover:before{
+.divTask:hover:before{
     content: "";
     width: 3px;
     height: 20px;
@@ -46,11 +20,11 @@
     animation-delay: .3s;
 }
 
-.containerTarefa li{
+.divTask{
     transition: margin .2s;
 }
 
-.containerTarefa li:hover{
+.divTask:hover{
     margin-left: 5px;
 }
 
