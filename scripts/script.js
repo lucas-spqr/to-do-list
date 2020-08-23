@@ -1,102 +1,53 @@
-// add new task button to use when calling create task function
-const newTaskButton = document.querySelector(".createNewTaskButton")
+const $ = document.querySelector.bind(document)
 
-// container tasks to use when appending childs
-const containerTasks = document.querySelector(".mainContainer")
+class Task{
+    constructor(){
+        this.newTaskButton = $(".createNewTaskButton")
+        this.containerTasks = $(".mainContainer")
+        this.createNewTaskButton = $(".createNewTaskButton")
 
-// object for task status transition
-const task = {
-    status: 0
-}
+        this.inputForEnter = $(".createNewTaskInput")
+        this.status = 0
+    }
 
-
-// main function that creates tasks
-function createTask(){
-
-    // input to use when creating tasks
-    const input = document.querySelector(".createNewTaskInput")
-    const inputValue = input.value
-
-    
-    // creates section
-    function createSection(){
+    createSection(){
         return document.createElement("section")
     }
-    
-    
-    // creates section divs and return as an object
-    function createSectionDivs(){
-        return divs = {
+
+    createSectionDivs(){
+        return {
             divImage: document.createElement("div"),
             divTask: document.createElement("div"),
             divConcludeButton: document.createElement("div"),
             divDeleteButton: document.createElement("div")
         }
     }
-    
 
-    // creates conclude button
-    function createConcludeButton(){
+    createConcludeButton(){
         return document.createElement("button")
     }
-    // declares conclude button
-    const concludeButton = createConcludeButton()
-    
-    
-    // creates delete button
-    function createDeleteButton(){
+
+    createDeleteButton(){
         return document.createElement("button")
     }
-    // declares delete button
-    const deleteButton = createDeleteButton()
-    
-    
-    // declares section and subelements:
-        // divImage
-        // divTask
-        // divConcludeButton
-        // divDeleteButton
-    const section = createSection()
-    const divImage = createSectionDivs().divImage
-    const divTask = createSectionDivs().divTask
-    const divConcludeButton = createSectionDivs().divConcludeButton
-    const divDeleteButton = createSectionDivs().divDeleteButton 
-    
-    
-    // creates image
-    function createImage(){
+
+    createImage(){
         const newImage = document.createElement("img")
         newImage.src = "./source/images/melancia-fechada.svg"
         return newImage
     }
-    // declares image
-    const newImage = createImage()
-    
 
-    // creates task (p)
-    function createP(){
+    createP(){
         return document.createElement("p")
     }
-    // declares task (p)
-    const newTask = createP()
-    
-    
-    // set text contents
-        // task content
-        // conclude button content
-        // conclude delete content
-    function setTextContent(){
+
+    setTextContent(newTask, inputValue, concludeButton, deleteButton){
         newTask.textContent = inputValue
         concludeButton.textContent = "concluído"
         deleteButton.textContent = "deletar"
-        
     }
-    // calls function
-    setTextContent()
 
-
-    // sets classes to styling
-    function setClasses(){
+    setClasses(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton){
         section.classList.add("grid-container")
 
         divImage.classList.add("divImage")
@@ -111,13 +62,10 @@ function createTask(){
         divDeleteButton.classList.add("divDeleteButton")
         deleteButton.classList.add("deleteButton")
     }
-    // calls function
-    setClasses()
-    
-    
-    // appends elements to section
-    function appendElementsToSection(){
-        containerTasks.appendChild(section)
+
+    appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton){
+
+        this.containerTasks.appendChild(section)
         section.appendChild(divImage)
         divImage.appendChild(newImage)
         
@@ -130,47 +78,30 @@ function createTask(){
         section.appendChild(divDeleteButton)
         divDeleteButton.appendChild(deleteButton)
     }
-    // calls function
-    appendElementsToSection()
 
-
-    // checks task status to make appropriate changes 
-    function concludeTaskStatus(){
-
-        if(task.status == 0){
+    concludeTaskStatus(newTask, newImage, concludeButton){
+        if(this.status == 0){
             newTask.style.textDecoration = "line-through"
-
             newTask.style.textDecorationColor = "var(--verde-escuro)"
-
             newImage.src = "../source/images/melancia-aberta.svg"
-
             concludeButton.textContent = "não concluído"
 
-            task.status = 1
+            this.status = 1
         }
         else{
             newTask.style.textDecoration = "initial"
-
             newImage.src = "../source/images/melancia-fechada.svg"
-
             concludeButton.textContent = "concluído"
 
-            task.status = 0
-        }
+            this.status = 0
+        }        
     }
-    concludeButton.addEventListener("click", concludeTaskStatus)
 
-
-
-    // deletes section
-    function deleteTask(){
+    deleteTask(section){
         section.remove()
     }
-    deleteButton.addEventListener("click", deleteTask)
 
-
-    // creates temporary input to edit task
-    function editInput(){
+    editInput(newTask, divTask){
         const editingInput = document.createElement("input")
         editingInput.classList.add("editingInput")
         editingInput.value = newTask.textContent
@@ -180,68 +111,81 @@ function createTask(){
 
         editingInput.focus()
 
-        editingInput.addEventListener("keyup", (event)=> {
+        editingInput.addEventListener("keyup", (event) => {
             if(event.keyCode == 13){
-                const editedInputValue = editingInput.value
-
-                newTask.textContent = editedInputValue
-
+                newTask.textContent = editingInput.value
                 newTask.style.display = "initial"
-
                 editingInput.remove()
             }
         })
-        
+
+    } 
+
+    createTask(){
+        const input = $(".createNewTaskInput")
+        const inputValue = input.value
+
+        const concludeButton = this.createConcludeButton()
+        const deleteButton = this.createDeleteButton()
+        const section = this.createSection()
+        const divImage = this.createSectionDivs().divImage
+        const divTask = this.createSectionDivs().divTask
+        const divConcludeButton = this.createSectionDivs().divConcludeButton
+        const divDeleteButton = this.createSectionDivs().divDeleteButton 
+
+        const newImage = this.createImage()
+        const newTask = this.createP()
+
+
+        this.setTextContent(newTask, inputValue, concludeButton, deleteButton)
+
+        this.setClasses(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton)
+
+        this.appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton)
+
+        concludeButton.addEventListener("click", () =>
+            this.concludeTaskStatus(newTask, newImage, concludeButton)
+            )
+
+        deleteButton.addEventListener("click", () => 
+            this.deleteTask(section)
+            )
+
+        newTask.addEventListener("click", () => {
+            this.editInput(newTask, divTask)
+        })
+
+        input.value = ""
+        input.focus()
     }
-    newTask.addEventListener("click", editInput)
-
-
-    // cleaning and focusing input
-    input.value = ""
-    input.focus()
 }
 
 
+const task = new Task()
 
+task.createNewTaskButton.addEventListener("click", () => {
+    const inputAtual = $(".createNewTaskInput")
 
-
-// gets create new task button 
-// connects function to button
-const createNewTaskButton = document.querySelector(".createNewTaskButton") 
-createNewTaskButton.addEventListener("click", 
-() => {
-
-    // gets new task input
-    const inputAtual = document.querySelector(".createNewTaskInput")
-
-    // blocks empty tasks
     if(!inputAtual.value == ""){
-    createTask()
+        task.createTask()
     }
-})
+}) 
 
+task.inputForEnter.addEventListener("keyup", (event) => {
+    const inputAtual = $(".createNewTaskInput")
 
-
-// gets new task input
-// connects function to "Enter" key pressing
-const input = document.querySelector(".createNewTaskInput")
-input.addEventListener("keyup", (event) => {
-
-    // blocks empty tasks
     if(event.keyCode == 13){
-        if(!input.value == ""){
-            createTask()
-            }
+        if(!inputAtual.value ==""){
+            task.createTask()
+        }
     }
-
 })
 
+    
 
-
-
-/*CREATES EXAMPLE TASK  */
+/* CREATES EXAMPLE TASK */
 function createExampleTask(){
-    input.value = "comprar melancia na feira"
-    createTask()
+    task.inputForEnter.value = "comprar melancia na feira"
+    task.createTask()
 }
 createExampleTask()
