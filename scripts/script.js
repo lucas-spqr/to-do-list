@@ -7,7 +7,11 @@ class Task{
         this.createNewTaskButton = $(".createNewTaskButton")
 
         this.inputForEnter = $(".createNewTaskInput")
+
         this.status = 0
+
+        this.id = 0
+        this.creationDate
     }
 
     createSection(){
@@ -79,7 +83,7 @@ class Task{
         divDeleteButton.appendChild(deleteButton)
     }
 
-    concludeTaskStatus(newTask, newImage, concludeButton){
+    concludeTaskStatus(newTask, newImage, concludeButton, objectTask){
         if(this.status == 0){
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
@@ -94,14 +98,23 @@ class Task{
             concludeButton.textContent = "concluído"
 
             this.status = 0
-        }        
+        }
+        
+        // changing object task status to new status
+        objectTask.taskStatus = this.status
+        console.log(objectTask)
     }
 
-    deleteTask(section){
+    deleteTask(section, objectTask){
         section.remove()
+
+        console.log(`Task apagada com sucesso!`)
+
+        // criar aqui comando pra apagar o objectTask da database
+        console.log(objectTask)
     }
 
-    editInput(newTask, divTask){
+    editInput(newTask, divTask, objectTask){
         const editingInput = document.createElement("input")
         editingInput.classList.add("editingInput")
         editingInput.value = newTask.textContent
@@ -116,10 +129,37 @@ class Task{
                 newTask.textContent = editingInput.value
                 newTask.style.display = "initial"
                 editingInput.remove()
+
+                // changing task object to new text content after edit
+                objectTask.taskContent = newTask.textContent
+                console.log(objectTask)
             }
         })
+    }
 
-    } 
+    // increment task id
+    autoincrementID(){
+        this.id += 1
+    }
+
+    // create object function
+    createObject(newTask, id, date, status){
+        return {
+            taskContent: newTask.textContent,
+            taskID: id,
+            taskDate: date,
+            taskStatus: status
+        }
+    }
+
+    // reseta o status para que não herde do anterior
+    resetStatus(){
+        this.status = 0        
+    }
+
+    setDate(){
+        this.creationDate = new Date()
+    }
 
     createTask(){
         const input = $(".createNewTaskInput")
@@ -136,6 +176,8 @@ class Task{
         const newImage = this.createImage()
         const newTask = this.createP()
 
+        // reseting task status to 0
+        this.resetStatus()
 
         this.setTextContent(newTask, inputValue, concludeButton, deleteButton)
 
@@ -144,7 +186,7 @@ class Task{
         this.appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton)
 
         concludeButton.addEventListener("click", () =>
-            this.concludeTaskStatus(newTask, newImage, concludeButton)
+            this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject)
             )
 
         deleteButton.addEventListener("click", () => 
@@ -152,8 +194,22 @@ class Task{
             )
 
         newTask.addEventListener("click", () => {
-            this.editInput(newTask, divTask)
+            this.editInput(newTask, divTask, taskObject)
         })
+
+        this.setDate()
+
+        // criando objeto com as propriedades:
+            // task content
+            // task id
+            // task date
+            // task status
+        const taskObject = this.createObject(newTask, this.id, this.creationDate, this.status)
+
+
+        this.autoincrementID()
+
+        console.log(taskObject)
 
         input.value = ""
         input.focus()
