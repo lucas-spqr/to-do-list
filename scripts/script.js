@@ -111,7 +111,7 @@ class Task{
         console.log(`Task apagada com sucesso!`)
 
         // criar aqui comando pra apagar o objectTask da database
-        console.log(objectTask)
+        console.log(`Object apagado: ${objectTask}`)
     }
 
     editInput(newTask, divTask, objectTask){
@@ -161,6 +161,19 @@ class Task{
         this.creationDate = new Date()
     }
 
+   /*  saveObjectOnLocalStorage(taskID, taskObject){
+
+        if(localStorage.getItem)
+
+        localStorage.setItem("task id", taskID)
+
+        localStorage.setItem("task content", taskObject.taskContent)
+
+        localStorage.setItem("task date", taskObject.taskDate)
+
+        localStorage.setItem("task status", taskObject.taskStatus)
+    } */
+
     createTask(){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
@@ -209,21 +222,34 @@ class Task{
 
         this.autoincrementID()
 
-        console.log(taskObject)
+        /* this.saveObjectOnLocalStorage(this.id, taskObject) */
 
+/*         console.log(taskObject)
+ */
         input.value = ""
         input.focus()
+
+        return taskObject
     }
 }
 
 
 const task = new Task()
 
+const taskList = []
+
 task.createNewTaskButton.addEventListener("click", () => {
     const inputAtual = $(".createNewTaskInput")
 
     if(!inputAtual.value == ""){
-        task.createTask()
+        // chamando a função e passando o retorno para taskObject
+        let taskObject = task.createTask()
+
+        // adicionando o objeto retornado a uma lista de tasks
+        taskList.push(taskObject)
+
+        // imprimindo a lista de tasks
+        console.log(taskList)
     }
 }) 
 
@@ -232,7 +258,14 @@ task.inputForEnter.addEventListener("keyup", (event) => {
 
     if(event.keyCode == 13){
         if(!inputAtual.value ==""){
-            task.createTask()
+            // chamando a função e passando o retorno para taskObject
+            let taskObject = task.createTask()
+
+            // adicionando o objeto retornado a uma lista de tasks
+            taskList.push(taskObject)
+
+            // imprimindo a lista de tasks
+            console.log(taskList)
         }
     }
 })
@@ -242,6 +275,36 @@ task.inputForEnter.addEventListener("keyup", (event) => {
 /* CREATES EXAMPLE TASK */
 function createExampleTask(){
     task.inputForEnter.value = "comprar melancia na feira"
-    task.createTask()
+
+    // chamando a função e passando o retorno para taskObject
+    let taskObject = task.createTask()
+
+    // adicionando o objeto retornado a uma lista de tasks
+    taskList.push(taskObject)
+
+    // imprimindo a lista de tasks
+    console.log(taskList)
+
+
+
 }
 createExampleTask()
+
+
+
+
+function createStoredTask(){
+    const lista = [{taskContent: "testando"}]
+
+    lista.forEach( taskOnList => {
+        let inputForStoredTask = $(".createNewTaskInput")
+
+        inputForStoredTask.value = taskOnList.taskContent
+
+        task.createTask()
+
+        taskList.push(taskOnList)
+    })
+}
+
+createStoredTask()
