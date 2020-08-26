@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document)
 
-class Task{
-    constructor(){
+class Task {
+    constructor() {
         this.newTaskButton = $(".createNewTaskButton")
         this.containerTasks = $(".mainContainer")
         this.createNewTaskButton = $(".createNewTaskButton")
@@ -14,11 +14,11 @@ class Task{
         this.creationDate
     }
 
-    createSection(){
+    createSection() {
         return document.createElement("section")
     }
 
-    createSectionDivs(){
+    createSectionDivs() {
         return {
             divImage: document.createElement("div"),
             divTask: document.createElement("div"),
@@ -27,31 +27,31 @@ class Task{
         }
     }
 
-    createConcludeButton(){
+    createConcludeButton() {
         return document.createElement("button")
     }
 
-    createDeleteButton(){
+    createDeleteButton() {
         return document.createElement("button")
     }
 
-    createImage(){
+    createImage() {
         const newImage = document.createElement("img")
         newImage.src = "./source/images/melancia-fechada.svg"
         return newImage
     }
 
-    createP(){
+    createP() {
         return document.createElement("p")
     }
 
-    setTextContent(newTask, inputValue, concludeButton, deleteButton){
+    setTextContent(newTask, inputValue, concludeButton, deleteButton) {
         newTask.textContent = inputValue
         concludeButton.textContent = "concluído"
         deleteButton.textContent = "deletar"
     }
 
-    setClasses(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton){
+    setClasses(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton) {
         section.classList.add("grid-container")
 
         divImage.classList.add("divImage")
@@ -67,12 +67,12 @@ class Task{
         deleteButton.classList.add("deleteButton")
     }
 
-    appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton){
+    appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton) {
 
         this.containerTasks.appendChild(section)
         section.appendChild(divImage)
         divImage.appendChild(newImage)
-        
+
         section.appendChild(divTask)
         divTask.appendChild(newTask)
 
@@ -83,8 +83,8 @@ class Task{
         divDeleteButton.appendChild(deleteButton)
     }
 
-    concludeTaskStatus(newTask, newImage, concludeButton, objectTask){
-        if(this.status == 0){
+    concludeTaskStatus(newTask, newImage, concludeButton, objectTask) {
+        if (this.status == 0) {
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
             newImage.src = "../source/images/melancia-aberta.svg"
@@ -92,20 +92,20 @@ class Task{
 
             this.status = 1
         }
-        else{
+        else {
             newTask.style.textDecoration = "initial"
             newImage.src = "../source/images/melancia-fechada.svg"
             concludeButton.textContent = "concluído"
 
             this.status = 0
         }
-        
+
         // changing object task status to new status
         objectTask.taskStatus = this.status
         console.log(objectTask)
     }
 
-    deleteTask(section, objectTask){
+    deleteTask(section, objectTask) {
         section.remove()
 
         console.log(`Task apagada com sucesso!`)
@@ -114,7 +114,7 @@ class Task{
         console.log(`Object apagado: ${objectTask}`)
     }
 
-    editInput(newTask, divTask, objectTask){
+    editInput(newTask, divTask, objectTask) {
         const editingInput = document.createElement("input")
         editingInput.classList.add("editingInput")
         editingInput.value = newTask.textContent
@@ -125,7 +125,7 @@ class Task{
         editingInput.focus()
 
         editingInput.addEventListener("keyup", (event) => {
-            if(event.keyCode == 13){
+            if (event.keyCode == 13) {
                 newTask.textContent = editingInput.value
                 newTask.style.display = "initial"
                 editingInput.remove()
@@ -138,43 +138,76 @@ class Task{
     }
 
     // increment task id
-    autoincrementID(){
+    autoincrementID() {
         this.id += 1
     }
 
     // create object function
-    createObject(newTask, id, date, status){
+    createObject(newTask, id, status, date) {
         return {
             taskContent: newTask.textContent,
             taskID: id,
-            taskDate: date,
-            taskStatus: status
+            taskStatus: status,
+            taskDate: date
+        }
+    }
+
+    createTaskOnObjectStore(task){
+        let request = indexedDB.open("task-list", 1)
+        
+        request.onsuccess = e => {
+            let db = request.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+
+            store.add(task)
+        }
+    }
+
+    deleteTaskOnObjectStore(task){
+        let request = indexedDB.open("task-list", 1)
+        
+        request.onsuccess = e => {
+            let db = request.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+
+            store.delete(task.taskID)
+        }
+    }
+
+    fetchTasksFromObjectStore(){
+        let request = indexedDB.open("task-list", 1)
+        
+
+        request.onsuccess = e => {
+            let db = request.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            let cursor = store.openCursor()
+
+            if(cursor){
+                let key = cursor.key
+                let value = cursor.value
+                console.log(key, value)
+                cursor.continue()
+            }
+            else{
+                console.log("no more tasks")
+            }
         }
     }
 
     // reseta o status para que não herde do anterior
-    resetStatus(){
-        this.status = 0        
+    resetStatus() {
+        this.status = 0
     }
 
-    setDate(){
+    setDate() {
         this.creationDate = new Date()
     }
 
-   /*  saveObjectOnLocalStorage(taskID, taskObject){
-
-        if(localStorage.getItem)
-
-        localStorage.setItem("task id", taskID)
-
-        localStorage.setItem("task content", taskObject.taskContent)
-
-        localStorage.setItem("task date", taskObject.taskDate)
-
-        localStorage.setItem("task status", taskObject.taskStatus)
-    } */
-
-    createTask(){
+    createTask() {
         const input = $(".createNewTaskInput")
         const inputValue = input.value
 
@@ -184,7 +217,7 @@ class Task{
         const divImage = this.createSectionDivs().divImage
         const divTask = this.createSectionDivs().divTask
         const divConcludeButton = this.createSectionDivs().divConcludeButton
-        const divDeleteButton = this.createSectionDivs().divDeleteButton 
+        const divDeleteButton = this.createSectionDivs().divDeleteButton
 
         const newImage = this.createImage()
         const newTask = this.createP()
@@ -200,11 +233,12 @@ class Task{
 
         concludeButton.addEventListener("click", () =>
             this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject)
-            )
+        )
 
-        deleteButton.addEventListener("click", () => 
+        deleteButton.addEventListener("click", () => {
             this.deleteTask(section)
-            )
+            this.deleteTaskOnObjectStore(taskObject)
+        })
 
         newTask.addEventListener("click", () => {
             this.editInput(newTask, divTask, taskObject)
@@ -212,20 +246,32 @@ class Task{
 
         this.setDate()
 
-        // criando objeto com as propriedades:
-            // task content
-            // task id
-            // task date
-            // task status
-        const taskObject = this.createObject(newTask, this.id, this.creationDate, this.status)
+        let openRequest = indexedDB.open("task-list", 1)
 
+        openRequest.onupgradeneeded = e => {
+            let db = openRequest.result
+            db.createObjectStore("tasks", {keyPath: "taskID"})
+            console.log("database created / updated")
+        }
+        
+        openRequest.onsuccess = e => {
+            let db = openRequest.result
+            console.log("database opened")
+        }
+
+        // criando objeto com as propriedades:
+            // taskContent
+            // taskID
+            // taskDate
+            // taskStatus
+        const taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
+
+        this.createTaskOnObjectStore(taskObject)
+
+        this.fetchTasksFromObjectStore()
 
         this.autoincrementID()
 
-        /* this.saveObjectOnLocalStorage(this.id, taskObject) */
-
-/*         console.log(taskObject)
- */
         input.value = ""
         input.focus()
 
@@ -235,76 +281,122 @@ class Task{
 
 
 const task = new Task()
-
-const taskList = []
-
+task.createTask()
+/* 
 task.createNewTaskButton.addEventListener("click", () => {
     const inputAtual = $(".createNewTaskInput")
 
-    if(!inputAtual.value == ""){
+    if (!inputAtual.value == "") {
         // chamando a função e passando o retorno para taskObject
         let taskObject = task.createTask()
 
-        // adicionando o objeto retornado a uma lista de tasks
-        taskList.push(taskObject)
-
-        // imprimindo a lista de tasks
-        console.log(taskList)
+        addTaskToObjectStore(taskObject)
     }
-}) 
+})
 
 task.inputForEnter.addEventListener("keyup", (event) => {
     const inputAtual = $(".createNewTaskInput")
 
-    if(event.keyCode == 13){
-        if(!inputAtual.value ==""){
+    if (event.keyCode == 13) {
+        if (!inputAtual.value == "") {
             // chamando a função e passando o retorno para taskObject
             let taskObject = task.createTask()
 
-            // adicionando o objeto retornado a uma lista de tasks
-            taskList.push(taskObject)
-
-            // imprimindo a lista de tasks
-            console.log(taskList)
+            addTaskToObjectStore(taskObject)
         }
     }
 })
 
-    
 
-/* CREATES EXAMPLE TASK */
-function createExampleTask(){
+const openRequest = indexedDB.open("task-list", 1)
+
+function init() {
+    openRequest.onupgradeneeded = e => {
+        console.log("db created / upgraded")
+
+        let db = openRequest.result
+
+        if (db.objectStoreNames.contains("tasks")) {
+            db.deleteObjectStore("tasks")
+        }
+
+        let tasks = db.createObjectStore("tasks", { keyPath: "taskID" })
+
+        let index = tasks.createIndex("by_status", "taskStatus")
+    }
+
+    openRequest.onsuccess = e => {
+        console.log("db open")
+    }
+}
+
+init()
+
+function addTaskToObjectStore(task) {
+
+    let db = openRequest.result
+    let tx = db.transaction("tasks", "readwrite")
+
+    let store = tx.objectStore("tasks")
+
+    let request = store.add(task)
+
+    request.onsuccess = e => {
+        console.log("Task added to object store")
+    }
+
+    request.onerror = e => {
+        console.log("Error", request.error)
+
+        if (request.error.name == "ConstraintError") {
+            console.log("Task with such id already exists")
+        }
+        else {
+            console.log("Aborting transaction...")
+            transaction.abort()
+        }
+    }
+} */
+
+/* CREATES EXAMPLE TASK  
+function createExampleTask() {
     task.inputForEnter.value = "comprar melancia na feira"
 
     // chamando a função e passando o retorno para taskObject
     let taskObject = task.createTask()
 
-    // adicionando o objeto retornado a uma lista de tasks
-    taskList.push(taskObject)
+    // criando uma transação pra exemple task
+    openRequest.onsuccess = e =>{
 
-    // imprimindo a lista de tasks
-    console.log(taskList)
+        let db = openRequest.result
+        let exempleTX = db.transaction("tasks", "readwrite")
 
-
-
+        let store = exempleTX.objectStore("tasks")
+        store.add(taskObject)
+    }
 }
 createExampleTask()
+*/
 
 
+// FUNCIONOU
+    // AO INICIALIZAR O SERVER PRA FETCH STORED TASKS
+    // TENTAR ABRIR O BANCO A CADA CRIAÇÃO DE TAREFA
+    // A CADA EDIÇÃO DE TAREFA (MUDAR CONTENT NO DB)
+    // AO CONCLUIR UMA TAREFA (MUDAR STATUS NO DB)
+    // AO DELETAR UMA TAREFA (APAGAR NO DB)
 
 
-function createStoredTask(){
-    const lista = [{taskContent: "testando"}]
+/*     
+let open = indexedDB.open("task-list", 1)
 
-    lista.forEach( taskOnList => {
-        let inputForStoredTask = $(".createNewTaskInput")
-
-        inputForStoredTask.value = taskOnList.taskContent
-
-        task.createTask()
-
-        taskList.push(taskOnList)
-    })
+open.onsuccess = e => {
+    let db = openRequest.result
+    let tx = db.transaction("tasks", "readwrite")
+    let store = tx.objectStore("tasks")
+    store.add({content: "testando outra abertura no banco",
+                taskStatus: 2,
+                taskID: 20     })
 }
 
-createStoredTask()
+ */
