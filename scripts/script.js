@@ -12,6 +12,13 @@ class Task {
 
         this.id = 0
         this.creationDate
+
+        this.objectsFetchedValues = []
+
+        this.fetchTasksFromObjectStore()
+        this.fetchedStatus = 0
+
+        this.createFetchedObjects()
     }
 
     createSection() {
@@ -178,7 +185,6 @@ class Task {
 
     fetchTasksFromObjectStore(){
         let request = indexedDB.open("task-list", 1)
-        
 
         request.onsuccess = e => {
             let db = request.result
@@ -186,16 +192,37 @@ class Task {
             let store = tx.objectStore("tasks")
             let cursor = store.openCursor()
 
-            if(cursor){
-                let key = cursor.key
-                let value = cursor.value
-                console.log(key, value)
-                cursor.continue()
-            }
-            else{
-                console.log("no more tasks")
+            cursor.onsuccess = e => {
+                let item = cursor.result
+                if(item){
+                    this.objectsFetchedValues.push(item.value)
+                    item.continue()
+                }
+                else{
+                    console.log("Finished task fetching")
+                    console.log(this.objectsFetchedValues)
+                }
             }
         }
+    }
+
+    createFetchedObjects(){
+        console.log(this.objectsFetchedValues)
+        const inputForCreatingFetchedObjects = $(".createNewTaskInput")
+
+        this.objectsFetchedValues.forEach(item => {
+            inputForCreatingFetchedObjects.value = item.taskContent
+            console.log(item.taskContent)
+            this.createTask()
+            console.log("Creating...")
+        })
+
+        this.fetchedStatus = 1
+
+    
+        this.objectsFetchedValues.forEach(item => {
+            console.log(item.taskID)
+        })
     }
 
     // reseta o status para que não herde do anterior
@@ -264,11 +291,10 @@ class Task {
             // taskID
             // taskDate
             // taskStatus
+
         const taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
 
         this.createTaskOnObjectStore(taskObject)
-
-        this.fetchTasksFromObjectStore()
 
         this.autoincrementID()
 
@@ -281,19 +307,21 @@ class Task {
 
 
 const task = new Task()
-task.createTask()
-/* 
+
+
 task.createNewTaskButton.addEventListener("click", () => {
     const inputAtual = $(".createNewTaskInput")
 
-    if (!inputAtual.value == "") {
+    if (!inputAtual.value == "") {/* 
         // chamando a função e passando o retorno para taskObject
         let taskObject = task.createTask()
+        addTaskToObjectStore(taskObject) */
 
-        addTaskToObjectStore(taskObject)
+        task.createTask()
     }
 })
 
+/* 
 task.inputForEnter.addEventListener("keyup", (event) => {
     const inputAtual = $(".createNewTaskInput")
 
@@ -307,9 +335,9 @@ task.inputForEnter.addEventListener("keyup", (event) => {
     }
 })
 
-
-const openRequest = indexedDB.open("task-list", 1)
-
+*/
+const openRequest = indexedDB.open("task-list", 1) 
+/*
 function init() {
     openRequest.onupgradeneeded = e => {
         console.log("db created / upgraded")
@@ -358,7 +386,7 @@ function addTaskToObjectStore(task) {
     }
 } */
 
-/* CREATES EXAMPLE TASK  
+/* CREATES EXAMPLE TASK   
 function createExampleTask() {
     task.inputForEnter.value = "comprar melancia na feira"
 
@@ -367,17 +395,16 @@ function createExampleTask() {
 
     // criando uma transação pra exemple task
     openRequest.onsuccess = e =>{
-
         let db = openRequest.result
-        let exempleTX = db.transaction("tasks", "readwrite")
+        let tx = db.transaction("tasks", "readwrite")
 
-        let store = exempleTX.objectStore("tasks")
+        let store = tx.objectStore("tasks")
         store.add(taskObject)
     }
 }
 createExampleTask()
-*/
 
+*/
 
 // FUNCIONOU
     // AO INICIALIZAR O SERVER PRA FETCH STORED TASKS
