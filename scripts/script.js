@@ -12,6 +12,7 @@ openRequest.onupgradeneeded = e => {
 }
 
 const fetchedItems = [] // colocar isso no constructor
+let fetchedStatus = []
 
 class Task {
     constructor() {
@@ -102,7 +103,7 @@ class Task {
         divDeleteButton.appendChild(deleteButton)
     }
 
-    concludeTaskStatus(newTask, newImage, concludeButton, objectTask, taskObjectID, taskObjectStatus) {
+    concludeTaskStatus(newTask, newImage, concludeButton, objectTask) {
         if (this.status == 0) {
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
@@ -119,10 +120,9 @@ class Task {
             this.status = 0
         }
 
+        task.changeStatusStore(objectTask)
         objectTask.taskStatus = this.status
-        console.log(objectTask)
-
-        task.changeStatusStore(taskObjectID, taskObjectStatus)
+        console.log("Task object status updated")
     }
 
     deleteTask(section) {
@@ -147,7 +147,9 @@ class Task {
                 editingInput.remove()
 
                 objectTask.taskContent = newTask.textContent
-                console.log(objectTask)
+                console.log("Task content updated")
+                task.editContentStore(objectTask)
+
             }
         })
     }
@@ -232,19 +234,15 @@ class Task {
         }
     }
 
-    changeStatusStore(taskID, taskStatus){
+    changeStatusStore(taskObject){
         let changeStatusRequest = indexedDB.open("task-list", 1)
         changeStatusRequest.onsuccess = e => {
             let db = changeStatusRequest.result
             let tx = db.transaction("tasks", "readwrite")
             let store = tx.objectStore("tasks")
-            
-            let query = store.get(taskID)
-            query.onsuccess = e => {
-                let item = query.result
-                console.log(item)
-                item.taskStatus = taskStatus
-            }
+
+            store.put(taskObject)
+            console.log("Task object status updated on store")
 
             tx.oncomplete = e => {
                 db.close()
@@ -298,6 +296,48 @@ class Task {
         }
     }
 
+    editContentStore(taskObject){
+        let editContentStore = indexedDB.open("task-list", 1)
+        editContentStore.onsuccess = e => {
+            let db = editContentStore.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            store.put(taskObject)
+            tx.oncomplete = e => {
+                db.close()
+                console.log("Task content updated on store")
+            }
+        }
+    }
+
+    createFetchedStatus(){
+        // NÃO ESTÁ SOMANDO CORRETAMENT
+            // A ITERAÇÃO TÁ ERRADA!
+        let createFetchedStatus = indexedDB.open("task-list", 1)
+        let iterations = 0
+
+        createFetchedStatus.onsuccess = e => {
+            let db = createFetchedStatus.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+
+            
+            let cursor = store.openCursor()
+            cursor.onsuccess = e => {
+                let item = cursor.result
+                
+                if(item){
+                    iterations += 1
+                    console.log(iterations)
+                }               
+            }
+                  
+            tx.oncomplete = e => {
+                db.close()
+            }
+        }
+    }
+
     createTask(){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
@@ -321,8 +361,9 @@ class Task {
 
         this.appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton)
 
-        concludeButton.addEventListener("click", () =>
-            this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject, taskObject.taskID, taskObject.taskStatus)
+        concludeButton.addEventListener("click", () =>{
+            this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject)
+            }
         )
 
         deleteButton.addEventListener("click", () => {
@@ -344,6 +385,8 @@ class Task {
         this.fetchID()
 
         this.addToStore(taskObject)
+
+        //this.createFetchedStatus()
 
         input.value = ""
         input.focus()
@@ -391,6 +434,6 @@ createsExempleTask() */
     // NÃO CRIAR A TASK DE EXEMPLO!
 
     // CONSERTAR:
-        // TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
-        // MUDAR O STATUS NA STORE AO MUDÁ-LO VISUALMENTE
-        // MUDAR O CONTENT NA STORE AO MUDÁ-LO VISUALMENTE
+        // () TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
+        // (X) MUDAR O STATUS NA STORE AO MUDÁ-LO VISUALMENTE
+        // (X) MUDAR O CONTENT NA STORE AO MUDÁ-LO VISUALMENTE
