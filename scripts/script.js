@@ -1,11 +1,5 @@
 const $ = document.querySelector.bind(document)
 
-// LINHA ======> 297
-
-// CRIAR FUNÇÃO QUE FAZ ISSO ABAIXO:
-// criando a database e object store
-    // a partir de agora, todas as transações devem fazer um 
-    // request para abrir a db e, no fim, fechá-la
 const openRequest = indexedDB.open("task-list", 1)
 openRequest.onupgradeneeded = e => {
     let db = openRequest.result
@@ -17,7 +11,7 @@ openRequest.onupgradeneeded = e => {
     db.close()
 }
 
-const fetchedItems = []
+const fetchedItems = [] // colocar isso no constructor
 
 class Task {
     constructor() {
@@ -35,6 +29,8 @@ class Task {
         this.fetchObjectStore()
 
         setTimeout(this.createFetchedItems, 1000)
+
+        this.lastItemIndex = 0
     }
 
     createSection() {
@@ -129,7 +125,7 @@ class Task {
         task.changeStatusStore(taskObjectID, taskObjectStatus)
     }
 
-    deleteTask(section, task) {
+    deleteTask(section) {
         section.remove()
         console.log(`Task deletada visualmente com sucesso!`)
     }
@@ -213,7 +209,7 @@ class Task {
             fetchedItems.forEach(item => {
                 input.value = item.taskContent
                 task.createTask()
-                store.delete(item.taskID) // pensar, no futuro, em store.clear()
+                store.delete(item.taskID)
             })
 
             tx.oncomplete = e => {
@@ -256,6 +252,52 @@ class Task {
         }
     }
 
+    fetchLastItem(){
+        let fetchLastItemRequest = indexedDB.open("task-list", 1)
+        fetchLastItemRequest.onsuccess = e => {
+            let db = fetchLastItemRequest.result
+            let tx = db.transaction("tasks", "readonly")
+            let store = tx.objectStore("tasks")
+            let cursor = store.openCursor()
+
+            cursor.onsuccess = e => {
+                let item = cursor.result
+                if(item){
+                    this.lastItemIndex += 1
+                    item.continue()
+                }
+            }
+
+            tx.oncomplete = e => db.close()
+        }
+    }
+
+    fetchID(){
+        let fetchIDRequest = indexedDB.open("task-list", 1)
+        fetchIDRequest.onsuccess = e => {
+            let db = fetchIDRequest.result
+            let tx = db.transaction("tasks", "readonly")
+            let store = tx.objectStore("tasks")
+            let query = store.get[this.lastItemIndex]
+            
+            if(query !== undefined){
+                this.id += query.taskID + 1
+            }
+        }
+    }
+
+    deleteOnStore(taskObject){
+        let deleteResquest = indexedDB.open("task-list", 1)
+        deleteResquest.onsuccess = e => {
+            let db = deleteResquest.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            store.delete(taskObject.taskID)
+            console.log("Task deleted on store")
+            tx.oncomplete = e => db.close()
+        }
+    }
+
     createTask(){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
@@ -285,6 +327,7 @@ class Task {
 
         deleteButton.addEventListener("click", () => {
             this.deleteTask(section, taskObject)
+            this.deleteOnStore(taskObject)
         })
 
         newTask.addEventListener("click", () => {
@@ -295,8 +338,10 @@ class Task {
 
         let taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
 
-        this.autoincrementID() // query on object store to update this.ID
-        // and start new tasks with the ID update 
+        this.autoincrementID()
+
+        this.fetchLastItem()
+        this.fetchID()
 
         this.addToStore(taskObject)
 
@@ -329,12 +374,23 @@ task.inputForEnter.addEventListener("keyup", (event) => {
     }
 })
 
-function createsExempleTask(){
+
+
+/* function createsExempleTask(){
     const input = $(".createNewTaskInput")
     input.value = "comprar melancia na feira"
     task.createTask()
 }
-createsExempleTask()
+createsExempleTask() */
 
 
+// CÓDIGO FUNCIONAL:
+    // TASKS ADICIONADAS NA STORE
+    // TASK ID AUTOMATICAMENTE ATUALIZADO
+    // TASK DELETADAS NA STORE
+    // NÃO CRIAR A TASK DE EXEMPLO!
 
+    // CONSERTAR:
+        // TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
+        // MUDAR O STATUS NA STORE AO MUDÁ-LO VISUALMENTE
+        // MUDAR O CONTENT NA STORE AO MUDÁ-LO VISUALMENTE
