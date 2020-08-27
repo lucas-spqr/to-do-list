@@ -1,5 +1,24 @@
 const $ = document.querySelector.bind(document)
 
+// LINHA ======> 297
+
+// CRIAR FUNÇÃO QUE FAZ ISSO ABAIXO:
+// criando a database e object store
+    // a partir de agora, todas as transações devem fazer um 
+    // request para abrir a db e, no fim, fechá-la
+const openRequest = indexedDB.open("task-list", 1)
+openRequest.onupgradeneeded = e => {
+    let db = openRequest.result
+
+    if(!db.objectStoreNames.contains("tasks")){
+        let store =  db.createObjectStore("tasks", {keyPath: "taskID"})
+        let statusIndex = store.createIndex("by_status", "taskStatus")
+    }
+    db.close()
+}
+
+const fetchedItems = []
+
 class Task {
     constructor() {
         this.newTaskButton = $(".createNewTaskButton")
@@ -13,12 +32,9 @@ class Task {
         this.id = 0
         this.creationDate
 
-        this.objectsFetchedValues = []
+        this.fetchObjectStore()
 
-        this.fetchTasksFromObjectStore()
-        this.fetchedStatus = 0
-
-        this.createFetchedObjects()
+        setTimeout(this.createFetchedItems, 1000)
     }
 
     createSection() {
@@ -90,7 +106,7 @@ class Task {
         divDeleteButton.appendChild(deleteButton)
     }
 
-    concludeTaskStatus(newTask, newImage, concludeButton, objectTask) {
+    concludeTaskStatus(newTask, newImage, concludeButton, objectTask, taskObjectID, taskObjectStatus) {
         if (this.status == 0) {
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
@@ -107,18 +123,15 @@ class Task {
             this.status = 0
         }
 
-        // changing object task status to new status
         objectTask.taskStatus = this.status
         console.log(objectTask)
+
+        task.changeStatusStore(taskObjectID, taskObjectStatus)
     }
 
-    deleteTask(section, objectTask) {
+    deleteTask(section, task) {
         section.remove()
-
-        console.log(`Task apagada com sucesso!`)
-
-        // criar aqui comando pra apagar o objectTask da database
-        console.log(`Object apagado: ${objectTask}`)
+        console.log(`Task deletada visualmente com sucesso!`)
     }
 
     editInput(newTask, divTask, objectTask) {
@@ -137,19 +150,16 @@ class Task {
                 newTask.style.display = "initial"
                 editingInput.remove()
 
-                // changing task object to new text content after edit
                 objectTask.taskContent = newTask.textContent
                 console.log(objectTask)
             }
         })
     }
 
-    // increment task id
     autoincrementID() {
         this.id += 1
     }
 
-    // create object function
     createObject(newTask, id, status, date) {
         return {
             taskContent: newTask.textContent,
@@ -159,73 +169,6 @@ class Task {
         }
     }
 
-    createTaskOnObjectStore(task){
-        let request = indexedDB.open("task-list", 1)
-        
-        request.onsuccess = e => {
-            let db = request.result
-            let tx = db.transaction("tasks", "readwrite")
-            let store = tx.objectStore("tasks")
-
-            store.add(task)
-        }
-    }
-
-    deleteTaskOnObjectStore(task){
-        let request = indexedDB.open("task-list", 1)
-        
-        request.onsuccess = e => {
-            let db = request.result
-            let tx = db.transaction("tasks", "readwrite")
-            let store = tx.objectStore("tasks")
-
-            store.delete(task.taskID)
-        }
-    }
-
-    fetchTasksFromObjectStore(){
-        let request = indexedDB.open("task-list", 1)
-
-        request.onsuccess = e => {
-            let db = request.result
-            let tx = db.transaction("tasks", "readwrite")
-            let store = tx.objectStore("tasks")
-            let cursor = store.openCursor()
-
-            cursor.onsuccess = e => {
-                let item = cursor.result
-                if(item){
-                    this.objectsFetchedValues.push(item.value)
-                    item.continue()
-                }
-                else{
-                    console.log("Finished task fetching")
-                    console.log(this.objectsFetchedValues)
-                }
-            }
-        }
-    }
-
-    createFetchedObjects(){
-        console.log(this.objectsFetchedValues)
-        const inputForCreatingFetchedObjects = $(".createNewTaskInput")
-
-        this.objectsFetchedValues.forEach(item => {
-            inputForCreatingFetchedObjects.value = item.taskContent
-            console.log(item.taskContent)
-            this.createTask()
-            console.log("Creating...")
-        })
-
-        this.fetchedStatus = 1
-
-    
-        this.objectsFetchedValues.forEach(item => {
-            console.log(item.taskID)
-        })
-    }
-
-    // reseta o status para que não herde do anterior
     resetStatus() {
         this.status = 0
     }
@@ -234,7 +177,86 @@ class Task {
         this.creationDate = new Date()
     }
 
-    createTask() {
+    fetchObjectStore(){
+        let fetchRequest = indexedDB.open("task-list", 1)
+        fetchRequest.onsuccess = e => {
+            let db = fetchRequest.result
+            let tx = db.transaction("tasks", "readonly")
+            let store = tx.objectStore("tasks")
+            let cursor = store.openCursor()
+
+            cursor.onsuccess = e => {
+                let items = cursor.result
+                if(items){
+                    fetchedItems.push(items.value)
+                    items.continue()
+                }
+            }
+
+            tx.oncomplete = e => {
+                console.log("Fetched from object store:")
+                console.log(fetchedItems)
+                db.close()
+            }
+        }
+    }
+
+    createFetchedItems(){
+        let createFetchedRequest = indexedDB.open("task-list")
+        const input = $(".createNewTaskInput")
+
+        createFetchedRequest.onsuccess = e => {
+            let db = createFetchedRequest.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            
+            fetchedItems.forEach(item => {
+                input.value = item.taskContent
+                task.createTask()
+                store.delete(item.taskID) // pensar, no futuro, em store.clear()
+            })
+
+            tx.oncomplete = e => {
+                db.close()
+            }
+        }
+    }
+
+    addToStore(taskObject){
+        let addToStoreRequest = indexedDB.open("task-list", 1)
+        addToStoreRequest.onsuccess = e => {
+            let db = addToStoreRequest.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            store.add(taskObject)
+
+            tx.oncomplete = e => {
+                db.close()
+            }
+        }
+    }
+
+    changeStatusStore(taskID, taskStatus){
+        let changeStatusRequest = indexedDB.open("task-list", 1)
+        changeStatusRequest.onsuccess = e => {
+            let db = changeStatusRequest.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
+            
+            let query = store.get(taskID)
+            query.onsuccess = e => {
+                let item = query.result
+                console.log(item)
+                item.taskStatus = taskStatus
+            }
+
+            tx.oncomplete = e => {
+                db.close()
+            }
+        }
+    }
+
+    createTask(){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
 
@@ -249,7 +271,6 @@ class Task {
         const newImage = this.createImage()
         const newTask = this.createP()
 
-        // reseting task status to 0
         this.resetStatus()
 
         this.setTextContent(newTask, inputValue, concludeButton, deleteButton)
@@ -259,12 +280,11 @@ class Task {
         this.appendElementsToSection(section, divImage, newImage, divTask, newTask, divConcludeButton, concludeButton, divDeleteButton, deleteButton)
 
         concludeButton.addEventListener("click", () =>
-            this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject)
+            this.concludeTaskStatus(newTask, newImage, concludeButton, taskObject, taskObject.taskID, taskObject.taskStatus)
         )
 
         deleteButton.addEventListener("click", () => {
-            this.deleteTask(section)
-            this.deleteTaskOnObjectStore(taskObject)
+            this.deleteTask(section, taskObject)
         })
 
         newTask.addEventListener("click", () => {
@@ -273,35 +293,15 @@ class Task {
 
         this.setDate()
 
-        let openRequest = indexedDB.open("task-list", 1)
+        let taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
 
-        openRequest.onupgradeneeded = e => {
-            let db = openRequest.result
-            db.createObjectStore("tasks", {keyPath: "taskID"})
-            console.log("database created / updated")
-        }
-        
-        openRequest.onsuccess = e => {
-            let db = openRequest.result
-            console.log("database opened")
-        }
+        this.autoincrementID() // query on object store to update this.ID
+        // and start new tasks with the ID update 
 
-        // criando objeto com as propriedades:
-            // taskContent
-            // taskID
-            // taskDate
-            // taskStatus
-
-        const taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
-
-        this.createTaskOnObjectStore(taskObject)
-
-        this.autoincrementID()
+        this.addToStore(taskObject)
 
         input.value = ""
         input.focus()
-
-        return taskObject
     }
 }
 
@@ -309,121 +309,32 @@ class Task {
 const task = new Task()
 
 
+
 task.createNewTaskButton.addEventListener("click", () => {
     const inputAtual = $(".createNewTaskInput")
 
-    if (!inputAtual.value == "") {/* 
-        // chamando a função e passando o retorno para taskObject
-        let taskObject = task.createTask()
-        addTaskToObjectStore(taskObject) */
-
+    if (!inputAtual.value == "") { 
         task.createTask()
     }
 })
 
-/* 
+
 task.inputForEnter.addEventListener("keyup", (event) => {
     const inputAtual = $(".createNewTaskInput")
 
     if (event.keyCode == 13) {
         if (!inputAtual.value == "") {
-            // chamando a função e passando o retorno para taskObject
-            let taskObject = task.createTask()
-
-            addTaskToObjectStore(taskObject)
+            task.createTask()
         }
     }
 })
 
-*/
-const openRequest = indexedDB.open("task-list", 1) 
-/*
-function init() {
-    openRequest.onupgradeneeded = e => {
-        console.log("db created / upgraded")
-
-        let db = openRequest.result
-
-        if (db.objectStoreNames.contains("tasks")) {
-            db.deleteObjectStore("tasks")
-        }
-
-        let tasks = db.createObjectStore("tasks", { keyPath: "taskID" })
-
-        let index = tasks.createIndex("by_status", "taskStatus")
-    }
-
-    openRequest.onsuccess = e => {
-        console.log("db open")
-    }
+function createsExempleTask(){
+    const input = $(".createNewTaskInput")
+    input.value = "comprar melancia na feira"
+    task.createTask()
 }
-
-init()
-
-function addTaskToObjectStore(task) {
-
-    let db = openRequest.result
-    let tx = db.transaction("tasks", "readwrite")
-
-    let store = tx.objectStore("tasks")
-
-    let request = store.add(task)
-
-    request.onsuccess = e => {
-        console.log("Task added to object store")
-    }
-
-    request.onerror = e => {
-        console.log("Error", request.error)
-
-        if (request.error.name == "ConstraintError") {
-            console.log("Task with such id already exists")
-        }
-        else {
-            console.log("Aborting transaction...")
-            transaction.abort()
-        }
-    }
-} */
-
-/* CREATES EXAMPLE TASK   
-function createExampleTask() {
-    task.inputForEnter.value = "comprar melancia na feira"
-
-    // chamando a função e passando o retorno para taskObject
-    let taskObject = task.createTask()
-
-    // criando uma transação pra exemple task
-    openRequest.onsuccess = e =>{
-        let db = openRequest.result
-        let tx = db.transaction("tasks", "readwrite")
-
-        let store = tx.objectStore("tasks")
-        store.add(taskObject)
-    }
-}
-createExampleTask()
-
-*/
-
-// FUNCIONOU
-    // AO INICIALIZAR O SERVER PRA FETCH STORED TASKS
-    // TENTAR ABRIR O BANCO A CADA CRIAÇÃO DE TAREFA
-    // A CADA EDIÇÃO DE TAREFA (MUDAR CONTENT NO DB)
-    // AO CONCLUIR UMA TAREFA (MUDAR STATUS NO DB)
-    // AO DELETAR UMA TAREFA (APAGAR NO DB)
+createsExempleTask()
 
 
-/*     
-let open = indexedDB.open("task-list", 1)
 
-open.onsuccess = e => {
-    let db = openRequest.result
-    let tx = db.transaction("tasks", "readwrite")
-    let store = tx.objectStore("tasks")
-    store.add({content: "testando outra abertura no banco",
-                taskStatus: 2,
-                taskID: 20     })
-}
-
- */
