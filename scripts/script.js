@@ -1,15 +1,5 @@
 const $ = document.querySelector.bind(document)
 
-const openRequest = indexedDB.open("task-list", 1)
-openRequest.onupgradeneeded = e => {
-    let db = openRequest.result
-
-    if(!db.objectStoreNames.contains("tasks")){
-        let store =  db.createObjectStore("tasks", {keyPath: "taskID"})
-        let statusIndex = store.createIndex("by_status", "taskStatus")
-    }
-    db.close()
-}
 
 const fetchedItems = [] // colocar isso no constructor
 let fetchedStatus = []
@@ -26,6 +16,8 @@ class Task {
 
         this.id = 0
         this.creationDate
+
+        this.createDatabase()
 
         this.fetchObjectStore()
 
@@ -173,6 +165,24 @@ class Task {
 
     setDate() {
         this.creationDate = new Date()
+    }
+
+    createDatabase(){
+        let openRequest = indexedDB.open("task-list", 1)
+        openRequest.onupgradeneeded = e => {
+            let db = openRequest.result
+            if(!db.objectStoreNames.contains("tasks")){
+                let store = db.createObjectStore("tasks", {keyPath: "taskID"})
+                store.createIndex("by_status", "taskStatus")
+                console.log("database created")
+            }
+        }
+
+        openRequest.onsuccess = e => {
+            let db = openRequest.result
+            console.log("database opened")
+            db.close()
+        }
     }
 
     fetchObjectStore(){
