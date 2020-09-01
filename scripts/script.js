@@ -218,14 +218,15 @@ class Task {
             let tx = db.transaction("tasks", "readwrite")
             let store = tx.objectStore("tasks")
 
-            let lista = [0, 1]
-            let contatador = 0
+            let lista = []
+            let index = 0
             
             fetchedItems.forEach(item => {
                 input.value = item.taskContent
-                task.createTask(lista[contatador])
+                lista.push(item.taskStatus)
+                task.createTask(lista[index])
                 store.delete(item.taskID)
-                contatador += 1
+                index += 1
             })
 
             tx.oncomplete = e => {
@@ -324,33 +325,6 @@ class Task {
         }
     }
 
-    createFetchedStatus(){
-        // NÃO ESTÁ SOMANDO CORRETAMENT
-            // A ITERAÇÃO TÁ ERRADA!
-        let createFetchedStatus = indexedDB.open("task-list", 1)
-        let iterations = 0
-
-        createFetchedStatus.onsuccess = e => {
-            let db = createFetchedStatus.result
-            let tx = db.transaction("tasks", "readwrite")
-            let store = tx.objectStore("tasks")
-
-            
-            let cursor = store.openCursor()
-            cursor.onsuccess = e => {
-                let item = cursor.result
-                
-                if(item){
-                    iterations += 1
-                    console.log(iterations)
-                }               
-            }
-                  
-            tx.oncomplete = e => {
-                db.close()
-            }
-        }
-    }
 
     fetchStatusLayout(status, newImage, newTask, concludeButton){
         if(status == 1){
@@ -363,7 +337,7 @@ class Task {
         }
     }
 
-    createTask(status=1){
+    createTask(status=0){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
 
@@ -413,8 +387,6 @@ class Task {
 
         this.addToStore(taskObject)
 
-        //this.createFetchedStatus()
-
         input.value = ""
         input.focus()
     }
@@ -461,6 +433,6 @@ createsExempleTask() */
     // NÃO CRIAR A TASK DE EXEMPLO!
 
     // CONSERTAR:
-        // () TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
+        // (X) TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
         // (X) MUDAR O STATUS NA STORE AO MUDÁ-LO VISUALMENTE
         // (X) MUDAR O CONTENT NA STORE AO MUDÁ-LO VISUALMENTE
