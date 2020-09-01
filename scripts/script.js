@@ -217,11 +217,15 @@ class Task {
             let db = createFetchedRequest.result
             let tx = db.transaction("tasks", "readwrite")
             let store = tx.objectStore("tasks")
+
+            let lista = [0, 1]
+            let contatador = 0
             
             fetchedItems.forEach(item => {
                 input.value = item.taskContent
-                task.createTask()
+                task.createTask(lista[contatador])
                 store.delete(item.taskID)
+                contatador += 1
             })
 
             tx.oncomplete = e => {
@@ -348,7 +352,18 @@ class Task {
         }
     }
 
-    createTask(){
+    fetchStatusLayout(status, newImage, newTask, concludeButton){
+        if(status == 1){
+            newImage.src = "./source/images/melancia-aberta.svg"
+            newTask.style.textDecoration = "line-through"
+            newTask.style.textDecorationColor = "var(--verde-escuro)"
+            newImage.src = "../source/images/melancia-aberta.svg"
+            concludeButton.textContent = "não concluído"
+            this.status = status
+        }
+    }
+
+    createTask(status=1){
         const input = $(".createNewTaskInput")
         const inputValue = input.value
 
@@ -386,6 +401,8 @@ class Task {
         })
 
         this.setDate()
+
+        this.fetchStatusLayout(status, newImage, newTask, concludeButton)
 
         let taskObject = this.createObject(newTask, this.id, this.status, this.creationDate)
 
