@@ -4,6 +4,7 @@
     --verde-claro: #9CFFAC;
     --vinho-escuro: #942E43;
     --vinho-claro: #E07289;
+    --branco: #fefefe
 }
 
 body{
@@ -86,14 +87,16 @@ h1{
 
 
 .buttons{
-    display: flex;
     width: 295px;
     margin: 0 auto;
-    justify-content: space-between;
 }
 
 a{
     border: none;
+    border-radius: 8px;
+
+    width: 108px;
+
     text-decoration: none;
 
     background-color: var(--vinho-claro);
@@ -104,12 +107,18 @@ a{
 
     padding: .5rem 1rem;
 
-    transition: .3s;
+    transition: background .3s;
 
     margin-bottom: 1rem;
 }
 
 a:hover{
-    background-color: rgba(148, 46, 67, 0.8);
+    color: var(--vinho-claro);
+    background: var(--branco);
+    font-weight: 500;
+    border: 3px solid var(--vinho-claro);
 }
 
+/* IMAGE SHAKE DURING FADE */
+
+/* () FIX SHAKING */
