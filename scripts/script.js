@@ -21,7 +21,7 @@ class Task {
 
         this.fetchObjectStore()
 
-        setTimeout(this.createFetchedItems, 1000)
+        setTimeout(this.createFetchedItems, 200)
 
         this.lastItemIndex = 0
     }
