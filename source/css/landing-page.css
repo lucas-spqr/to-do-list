@@ -4,7 +4,7 @@
     --verde-claro: #9CFFAC;
     --vinho-escuro: #942E43;
     --vinho-claro: #E07289;
-    --branco: #fefefe
+    --branco: #fefefe;
 }
 
 body{
@@ -50,8 +50,8 @@ h1{
 }
 
 .image{
-    width: 20rem;
-    height: 20rem;
+    width: 5em;
+    height: 5em;
     background: url("../images/melancia-aberta.svg");
     background-size: contain;
     background-position: center;
@@ -67,8 +67,6 @@ h1{
 
 @keyframes fade{
     0%{
-        width: 20rem;
-        height: 20rem;
         background: url("../images/melancia-aberta.svg");
         background-size: contain;
         background-position: center;
@@ -76,8 +74,6 @@ h1{
     }
 
     100%{
-        width: 20rem;
-        height: 20rem;
         background: url("../images/melancia-fechada.svg");
         background-size: contain;
         background-position: center;
@@ -122,3 +118,4 @@ a:hover{
 /* IMAGE SHAKE DURING FADE */
 
 /* () FIX SHAKING */
+/* () FIX MOBILE IMAGE SIZE */
