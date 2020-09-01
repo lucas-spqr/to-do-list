@@ -24,6 +24,8 @@ class Task {
         setTimeout(this.createFetchedItems, 200)
 
         this.lastItemIndex = 0
+
+        this.statusList = [] //
     }
 
     createSection() {
@@ -96,25 +98,40 @@ class Task {
     }
 
     concludeTaskStatus(newTask, newImage, concludeButton, objectTask) {
-        if (this.status == 0) {
-            newTask.style.textDecoration = "line-through"
-            newTask.style.textDecorationColor = "var(--verde-escuro)"
-            newImage.src = "../source/images/melancia-aberta.svg"
-            concludeButton.textContent = "não concluído"
+        let taskStatus
+        let updateMessage = "Task object status updated"
 
-            this.status = 1
+        let statusRequest = indexedDB.open("task-list", 1)
+        statusRequest.onsuccess = e => {
+            let db = statusRequest.result
+            let tx = db.transaction("tasks", "readonly")
+            let store = tx.objectStore("tasks")
+            let query = store.get(objectTask.taskID)
+            query.onsuccess = e => {
+                taskStatus = query.result.taskStatus
+
+                if(taskStatus == 0){
+                    newTask.style.textDecoration = "line-through"
+                    newTask.style.textDecorationColor = "var(--verde-escuro)"
+                    newImage.src = "../source/images/melancia-aberta.svg"
+                    concludeButton.textContent = "não concluído"
+                    taskStatus = 1
+                }
+                else if(taskStatus == 1){
+                    newTask.style.textDecoration = "initial"
+                    newImage.src = "../source/images/melancia-fechada.svg"
+                    concludeButton.textContent = "concluído"
+                    taskStatus = 0
+                }
+        
+                task.changeStatusStore(objectTask)
+                objectTask.taskStatus = taskStatus
+
+                console.log(updateMessage)
+            }
+
+            tx.oncomplete = e => db.close()
         }
-        else {
-            newTask.style.textDecoration = "initial"
-            newImage.src = "../source/images/melancia-fechada.svg"
-            concludeButton.textContent = "concluído"
-
-            this.status = 0
-        }
-
-        task.changeStatusStore(objectTask)
-        objectTask.taskStatus = this.status
-        console.log("Task object status updated")
     }
 
     deleteTask(section) {
