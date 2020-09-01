@@ -20,14 +20,14 @@ body{
 
 .main{
     width: 90%;
-    margin: 5rem auto 0;
+    margin: 1.5rem auto 0;
 }
 
 .titulo{
     display: flex;
     justify-content: center;
 
-    margin-bottom: 5rem;
+    margin-bottom: 1rem;
 }
 
 h1{
@@ -40,77 +40,50 @@ h1{
     
 }
 
-.melanciaFechada, .melanciaAberta{
-    width: 300px;
-    height: 300px;
-}
-
-.melanciaAberta{
-    position: fixed;
-}
 
 .container {
     display: flex;
     justify-content: center;
 
-
-    margin-bottom: 10rem;
-
-    /* position: relative; */
+    margin-bottom: 6rem;
 }
 
-/* .container img {
-    position: absolute;
-} */
+.image{
+    width: 20rem;
+    height: 20rem;
+    background: url("../images/melancia-aberta.svg");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 
-
-.melanciaFechada {
-    animation-name: fadeOut;
-    animation-timing-function: ease-in-out;
+    animation-name: fade;
+    animation-timing-function: ease;
     animation-iteration-count: infinite;
     animation-duration: 3s;
     animation-direction: alternate;
-  }
-  
-@keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-    25% {
-        opacity: 1;
-    }
-    75% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    animation-delay: 1s;
 }
 
+@keyframes fade{
+    0%{
+        width: 20rem;
+        height: 20rem;
+        background: url("../images/melancia-aberta.svg");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
 
-
-.melanciaAberta {
-    animation-name: fadeIn;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    animation-duration: 3s;
-    animation-direction: alternate;
-  }
-  
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    25% {
-        opacity: 0;
-    }
-    75% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 1;
-    }
+    100%{
+        width: 20rem;
+        height: 20rem;
+        background: url("../images/melancia-fechada.svg");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        }
 }
+
 
 .buttons{
     display: flex;
@@ -133,7 +106,7 @@ a{
 
     transition: .3s;
 
-    margin-bottom: 9rem;
+    margin-bottom: 1rem;
 }
 
 a:hover{
