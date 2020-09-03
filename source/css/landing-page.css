@@ -106,13 +106,12 @@ h1{
     transition: background .3s;
 
     margin-bottom: 1rem;
+
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .buttons a:hover{
-    color: var(--vinho-claro);
-    background: var(--branco);
-    font-weight: 500;
-    border: 3px solid var(--vinho-claro);
+    background: var(--vinho-escuro);
     cursor: pointer;
 }
 
@@ -236,7 +235,7 @@ h1{
 .form-button:hover{
     cursor: pointer;
 
-    background: var(--verde-escuro);
+    background: var(--vinho-escuro);
 }
 
 
