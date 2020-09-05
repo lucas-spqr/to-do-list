@@ -8,6 +8,12 @@ signIn.addEventListener("click", e => {
     formSection.style.display = "initial"
 })
 
+signUp.addEventListener("click", e => {
+    const formSection = document.querySelector(".formSection")
+    formSection.classList.add("fadeIn")
+    formSection.classList.remove("fadeOut")
+    formSection.style.display = "initial"
+})
 
 const returnArrow = document.querySelector(".returnArrow")
 returnArrow.addEventListener("click", e => {
