@@ -19,9 +19,11 @@ class Task {
 
         this.createDatabase()
 
+        this.fetched = false
+
         this.fetchObjectStore()
 
-        setTimeout(this.createFetchedItems, 200)
+        setInterval(this.createFetchedItems, 200)
 
         this.lastItemIndex = 0
 
@@ -221,33 +223,37 @@ class Task {
             tx.oncomplete = e => {
                 console.log("Fetched from object store:")
                 console.log(fetchedItems)
+                task.fetched = true
                 db.close()
             }
         }
     }
 
     createFetchedItems(){
-        let createFetchedRequest = indexedDB.open("task-list")
-        const input = $(".createNewTaskInput")
-
-        createFetchedRequest.onsuccess = e => {
-            let db = createFetchedRequest.result
-            let tx = db.transaction("tasks", "readwrite")
-            let store = tx.objectStore("tasks")
-
-            let lista = []
-            let index = 0
+        if(task.fetched){
+            let createFetchedRequest = indexedDB.open("task-list")
+            const input = $(".createNewTaskInput")
             
-            fetchedItems.forEach(item => {
-                input.value = item.taskContent
-                lista.push(item.taskStatus)
-                task.createTask(lista[index])
-                store.delete(item.taskID)
-                index += 1
-            })
-
-            tx.oncomplete = e => {
-                db.close()
+            createFetchedRequest.onsuccess = e => {
+                let db = createFetchedRequest.result
+                let tx = db.transaction("tasks", "readwrite")
+                let store = tx.objectStore("tasks")
+                
+                let lista = []
+                let index = 0
+                
+                fetchedItems.forEach(item => {
+                    input.value = item.taskContent
+                    lista.push(item.taskStatus)
+                    task.createTask(lista[index])
+                    store.delete(item.taskID)
+                    index += 1
+                })
+                
+                tx.oncomplete = e => {
+                    db.close()
+                    task.fetched = false
+                }
             }
         }
     }
