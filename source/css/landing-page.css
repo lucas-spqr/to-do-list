@@ -8,7 +8,7 @@
 }
 
 body{
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
 
     font-size: 3rem;
@@ -241,6 +241,155 @@ h1{
 
 
 
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+@media (min-width: 320px){
+
+    .main{
+        width: 90%;
+    }
+
+    .titulo h1{
+        font-size: .7em;
+    }
+
+    .image{
+        width: 3.5em;
+        height: 3.5em;
+    }
+
+    .buttons{
+        font-size: .9em;
+    }
+
+    .form{
+        width: 200px;
+        margin-bottom: 1em;
+    }
+
+    .form label{
+        font-size: .8em;
+    }
+
+    .form input{
+        width: 160px;
+        font-size: .5em;
+    }
+
+    .form-button{
+        font-size: .7em;
+        padding: .8em .4em;
+    }
+
+}
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+@media (min-width: 375px){
+    .titulo h1{
+        font-size: .8em;
+    }
+
+    .image{
+        width: 3.8em;
+        height: 3.8em;
+    }
+
+    .buttons{
+        font-size: 1em;
+    }
+
+    .form{
+        width: 270px;
+    }
+
+    .form label{
+        font-size: .9em;
+    }
+
+    .form input{
+        width: 200px;
+        font-size: .6em;
+    }
+
+    .form-button{
+        font-size: .8em;
+        padding: .8em .4em;
+    }
+}
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+@media (min-width: 425px){
+    .titulo h1{
+        font-size: .9em;
+    }
+
+    .image{
+        width: 4em;
+        height: 4em;
+    }
+
+    .buttons{
+        width: 350px;
+        font-size: 1.2em;
+    }
+
+    .form{
+        width: 320px;
+    }
+
+    .form label{
+        font-size: 1em;
+    }
+
+    .form input{
+        width: 250px;
+    }
+
+    .form-button{
+        padding: .8em .4em;
+    }
+}
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+@media (min-width: 768px){
+    .titulo h1{
+        font-size: 1em;
+    }
+
+    .image{
+        width: 5em;
+        height: 5em;
+    }
+
+    .buttons{
+        width: 400px;
+    }
+
+    .form{
+        width: 400px;
+    }
+
+    .form label{
+        font-size: 1.1em;
+    }
+
+    .form input{
+        width: 290px;
+        font-size: .7em;
+    }
+
+    .form-button{
+        font-size: 1em;
+        padding: .8em .7em;
+    }
+    
+}
+
+@media (min-width: 1029px){
+    .form{
+        margin-top: 84px;
+    }
+    
+} 
 
 /* IMAGE SHAKE DURING FADE */
 
