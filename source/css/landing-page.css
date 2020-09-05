@@ -5,6 +5,10 @@
     --vinho-escuro: #942E43;
     --vinho-claro: #E07289;
     --branco: #fefefe;
+    --grey-1: rgba(54, 55, 59, .9);
+    --grey-2: rgb(30, 30, 30);
+    --grey-3: rgb(31, 31, 31);
+    --grey-4: rgb(30, 30, 31);
 }
 
 body{
@@ -121,7 +125,7 @@ h1{
     left: 0;
     height: 100vh;
     width: 100vw;
-    background: rgba(136, 136, 136, 0.7);
+    background: var(--grey-1);
     display: none;
 }
 

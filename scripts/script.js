@@ -61,7 +61,7 @@ class Task {
 
     setTextContent(newTask, inputValue, concludeButton, deleteButton) {
         newTask.textContent = inputValue
-        concludeButton.textContent = "concluído"
+        concludeButton.textContent = "concluir"
         deleteButton.textContent = "deletar"
     }
 
@@ -114,13 +114,20 @@ class Task {
                     newTask.style.textDecoration = "line-through"
                     newTask.style.textDecorationColor = "var(--verde-escuro)"
                     newImage.src = "../source/images/melancia-aberta.svg"
-                    concludeButton.textContent = "não concluído"
+
+                    concludeButton.textContent = "concluído"
+                    concludeButton.style.textDecoration = "line-through"
+                    concludeButton.style.textDecorationColor = "var(--branco)"
+
                     taskStatus = 1
                 }
                 else if(taskStatus == 1){
                     newTask.style.textDecoration = "initial"
                     newImage.src = "../source/images/melancia-fechada.svg"
-                    concludeButton.textContent = "concluído"
+
+                    concludeButton.textContent = "concluír"
+                    concludeButton.style.textDecoration = "initial"
+
                     taskStatus = 0
                 }
         
@@ -350,7 +357,11 @@ class Task {
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
             newImage.src = "../source/images/melancia-aberta.svg"
-            concludeButton.textContent = "não concluído"
+
+            concludeButton.textContent = "concluído"
+            concludeButton.style.textDecoration = "line-through"
+            concludeButton.style.textDecorationColor = "var(--branco)"
+
             this.status = status
         }
     }
