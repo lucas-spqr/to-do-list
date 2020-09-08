@@ -1,6 +1,8 @@
 const signUp = document.querySelector(".sign-up") 
 const signIn = document.querySelector(".sign-in")
 
+const body = document.querySelector(".main")
+
 signIn.addEventListener("click", e => {
     const formSection = document.querySelector(".formSection")
     formSection.classList.add("fadeIn")

@@ -19,11 +19,9 @@ class Task {
 
         this.createDatabase()
 
-        this.fetched = false
-
         this.fetchObjectStore()
 
-        setInterval(this.createFetchedItems, 200)
+        /* setTimeout(this.createFetchedItems, 500) */
 
         this.lastItemIndex = 0
 
@@ -63,7 +61,7 @@ class Task {
 
     setTextContent(newTask, inputValue, concludeButton, deleteButton) {
         newTask.textContent = inputValue
-        concludeButton.textContent = "concluído"
+        concludeButton.textContent = "concluir"
         deleteButton.textContent = "deletar"
     }
 
@@ -116,13 +114,20 @@ class Task {
                     newTask.style.textDecoration = "line-through"
                     newTask.style.textDecorationColor = "var(--verde-escuro)"
                     newImage.src = "../source/images/melancia-aberta.svg"
-                    concludeButton.textContent = "não concluído"
+
+                    concludeButton.textContent = "concluído"
+                    concludeButton.style.textDecoration = "line-through"
+                    concludeButton.style.textDecorationColor = "var(--branco)"
+
                     taskStatus = 1
                 }
                 else if(taskStatus == 1){
                     newTask.style.textDecoration = "initial"
                     newImage.src = "../source/images/melancia-fechada.svg"
-                    concludeButton.textContent = "concluído"
+
+                    concludeButton.textContent = "concluír"
+                    concludeButton.style.textDecoration = "initial"
+
                     taskStatus = 0
                 }
         
@@ -223,37 +228,38 @@ class Task {
             tx.oncomplete = e => {
                 console.log("Fetched from object store:")
                 console.log(fetchedItems)
-                task.fetched = true
+
+                // added method here
+                task.createFetchedItems()
+                console.log("created fetched items")
                 db.close()
             }
         }
     }
 
     createFetchedItems(){
-        if(task.fetched){
-            let createFetchedRequest = indexedDB.open("task-list")
-            const input = $(".createNewTaskInput")
+        let createFetchedRequest = indexedDB.open("task-list")
+        const input = $(".createNewTaskInput")
+        
+        createFetchedRequest.onsuccess = e => {
+            let db = createFetchedRequest.result
+            let tx = db.transaction("tasks", "readwrite")
+            let store = tx.objectStore("tasks")
             
-            createFetchedRequest.onsuccess = e => {
-                let db = createFetchedRequest.result
-                let tx = db.transaction("tasks", "readwrite")
-                let store = tx.objectStore("tasks")
-                
-                let lista = []
-                let index = 0
-                
-                fetchedItems.forEach(item => {
-                    input.value = item.taskContent
-                    lista.push(item.taskStatus)
-                    task.createTask(lista[index])
-                    store.delete(item.taskID)
-                    index += 1
-                })
-                
-                tx.oncomplete = e => {
-                    db.close()
-                    task.fetched = false
-                }
+            let lista = []
+            let index = 0
+            
+            fetchedItems.forEach(item => {
+                input.value = item.taskContent
+                lista.push(item.taskStatus)
+                task.createTask(lista[index])
+                store.delete(item.taskID)
+                index += 1
+            })
+            
+            tx.oncomplete = e => {
+                db.close()
+                task.fetched = false
             }
         }
     }
@@ -355,7 +361,11 @@ class Task {
             newTask.style.textDecoration = "line-through"
             newTask.style.textDecorationColor = "var(--verde-escuro)"
             newImage.src = "../source/images/melancia-aberta.svg"
-            concludeButton.textContent = "não concluído"
+
+            concludeButton.textContent = "concluído"
+            concludeButton.style.textDecoration = "line-through"
+            concludeButton.style.textDecorationColor = "var(--branco)"
+
             this.status = status
         }
     }
@@ -454,8 +464,3 @@ createsExempleTask() */
     // TASK ID AUTOMATICAMENTE ATUALIZADO
     // TASK DELETADAS NA STORE
     // NÃO CRIAR A TASK DE EXEMPLO!
-
-    // CONSERTAR:
-        // (X) TRAZER STATUS DA STORE PARA AS TASKS CRIADAS APÓS O FETCH
-        // (X) MUDAR O STATUS NA STORE AO MUDÁ-LO VISUALMENTE
-        // (X) MUDAR O CONTENT NA STORE AO MUDÁ-LO VISUALMENTE
